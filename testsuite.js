@@ -20,16 +20,16 @@
  * methods are not test cases, therefore exceptions and/or assertions are not
  * captured for these methods.
  *
- * All other methods are treated as test cases. Non-method members are permitted
- * but ignored.
+ * All other methods are treated as test cases. Properties are permitted but
+ * ignored.
  *
- * All test cases can reference their test suite using 'this'.
+ * All methods of the test suite can refer to the test case object using 'this'.
  *
  * @method suite
  *
- * @param testCase {object} The object that defines the test suite.
+ * @param testCase {Object} The object that defines the test suite.
  *
- * @return {array} Initially an empty array that is populated with the assertion
+ * @return {Array} Initially an empty array that is populated with the assertion
  *      messages of failed assertions as and when assertions fail.
  *
  * @static
@@ -38,6 +38,7 @@ function suite(testCase) {
     "use strict";
 
     var error = [],
+
         setUpClass = testCase.setUpClass || function () {},
         setUp = testCase.setUp || function () {},
         tearDown = testCase.tearDown || function () {},
@@ -55,7 +56,7 @@ function suite(testCase) {
             setUp.call(testCase);
 
             try {
-                testCase[i].call(testCase);
+                testCase[i]();
             } catch (e) {
                 error.push(e.message);
             }
