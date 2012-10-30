@@ -12,10 +12,10 @@
  * methods, each of which is a test case (http://en.wikipedia.org/wiki/XUnit).
  *
  * Four special methods can be defined to manage test fixtures:
- *  - setUpClass,
+ *  - setUpSuite,
  *  - setUp,
  *  - tearDown, and
- *  - tearDownClass
+ *  - tearDownSuite
  * conforming to JUnit 4 (http://en.wikipedia.org/wiki/JUnit). These four
  * methods are not test cases, therefore exceptions and/or assertions are not
  * captured for these methods.
@@ -39,18 +39,18 @@ function suite(testCase) {
 
     var error = [],
 
-        setUpClass = testCase.setUpClass || function () {},
+        setUpSuite = testCase.setUpSuite || function () {},
         setUp = testCase.setUp || function () {},
         tearDown = testCase.tearDown || function () {},
-        tearDownClass = testCase.tearDownClass || function () {},
+        tearDownSuite = testCase.tearDownSuite || function () {},
         i;
 
-    delete testCase.setUpClass;
+    delete testCase.setUpSuite;
     delete testCase.setUp;
     delete testCase.tearDown;
-    delete testCase.tearDownClass;
+    delete testCase.tearDownSuite;
 
-    setUpClass.call(testCase);
+    setUpSuite.call(testCase);
     for (i in testCase) {
         if (testCase.hasOwnProperty(i) && typeof testCase[i] === 'function') {
             setUp.call(testCase);
@@ -64,7 +64,7 @@ function suite(testCase) {
             tearDown.call(testCase);
         }
     }
-    tearDownClass.call(testCase);
+    tearDownSuite.call(testCase);
 
     return error;
 }
