@@ -2,134 +2,87 @@
 var test = require('../testsuite.js'),
     assert = require('assert'),
 
-    errors = [],
-
-    testCase = {
-        wasRun: 0,
-        testCase: function () {
-            "use strict";
-            this.wasRun += 1;
-
-        },
-        testCaseTwo: function () {
-            "use strict";
-            this.wasRun += 1;
-        }
-    },
-
-    testCaseTest = {
-        test: function () {
-            "use strict";
-            assert(testCase.wasRun === 0,
-                'testCase.wasRun incorrectly initialised for testCaseTest');
-            test.suite(testCase);
-            assert(testCase.wasRun === 2,
-                'Multiple test cases are not run');
-        }
-    },
-
-    setUp = {
-        wasRun: 0,
+    testSuite = {
         setUp: function () {
             "use strict";
-            this.wasRun += 1;
+            this.testSuite = {
+                wasRun: {
+                    setUpSuite: false,
+                    setUp: 0,
+                    testCase: 0,
+                    tearDown: 0,
+                    tearDownSuite: false
+                },
+                setUpSuite: function () {
+                    this.wasRun.setUpSuite = true;
+                },
+                setUp: function () {
+                    this.wasRun.setUp += 1;
 
+                },
+                testCaseOne: function () {
+                    this.wasRun.testCase += 1;
+
+                },
+                testCaseTwo: function () {
+                    this.wasRun.testCase += 1;
+                },
+                tearDown: function () {
+                    this.wasRun.tearDown += 1;
+
+                },
+                tearDownSuite: function () {
+                    this.wasRun.tearDownSuite = true;
+
+                }
+            };
         },
-        testCase: function () {
+        testSetUpSuite: function () {
             "use strict";
+            assert(this.testSuite.wasRun.setUpSuite === false,
+                'testSuite.wasRun.setUpSuite initialised incorrectly');
+            test.suite(this.testSuite);
+            assert(this.testSuite.wasRun.setUpSuite === true,
+                'setUpSuite method is not being run');
         },
-        testCaseTwo: function () {
+        testSetUp: function () {
             "use strict";
-        }
-    },
-
-    setUpTest = {
-        test: function () {
+            assert(this.testSuite.wasRun.setUp === 0,
+                'testSuite.wasRun.setUp initialised incorrectly');
+            test.suite(this.testSuite);
+            assert(this.testSuite.wasRun.setUp === 2,
+                'setUp is not running for every test case');
+        },
+        testTestCase: function () {
             "use strict";
-            assert(setUp.wasRun === 0,
-                'setUp.wasRun incorrectly initialised for setUpTest');
-            test.suite(setUp);
-            assert(setUp.wasRun === 2,
-                'setUp methods are not running for every test case');
-        }
-    },
-
-    tearDown = {
-        wasRun: 0,
+            assert(this.testSuite.wasRun.testCase === 0,
+                'testSuite.wasRun.testCase initialised incorrectly');
+            test.suite(this.testSuite);
+            assert(this.testSuite.wasRun.testCase === 2,
+                'Multiple test cases are not run');
+        },
+        testTearDown: function () {
+            "use strict";
+            assert(this.testSuite.wasRun.tearDown === 0,
+                'testSuite.wasRun.tearDown initialised incorrectly');
+            test.suite(this.testSuite);
+            assert(this.testSuite.wasRun.tearDown === 2,
+                'tearDown is not running for every test case');
+        },
+        testTearDownSuite: function () {
+            "use strict";
+            assert(this.testSuite.wasRun.tearDownSuite === false,
+                'testSuite.wasRun.tearDownSuite initialised incorrectly');
+            test.suite(this.testSuite);
+            assert(this.testSuite.wasRun.tearDownSuite === true,
+                'tearDownSuite method is not being run');
+        },
         tearDown: function () {
             "use strict";
-            this.wasRun += 1;
-
-        },
-        testCase: function () {
-            "use strict";
-        },
-        testCaseTwo: function () {
-            "use strict";
+            delete this.testSuite;
         }
     },
 
-    tearDownTest = {
-        test: function () {
-            "use strict";
-            assert(tearDown.wasRun === 0,
-                'tearDown.wasRun incorrectly initialised for tearDownTest');
-            test.suite(tearDown);
-            assert(tearDown.wasRun === 2,
-                'tearDown methods are not running for every test case');
-        }
-    },
+    errors = test.suite(testSuite);
 
-    setUpSuite = {
-        wasRun: false,
-        setUpSuite: function () {
-            "use strict";
-            this.wasRun = true;
-        }
-    },
-
-    setUpSuiteTest = {
-        test: function () {
-            "use strict";
-            assert(setUpSuite.wasRun === false,
-                'setUpSuite.wasRun initialised incorrectly');
-            test.suite(setUpSuite);
-            assert(setUpSuite.wasRun === true,
-                'setUpSuite method is not running');
-        }
-    },
-
-    tearDownSuite = {
-        wasRun: false,
-        tearDownSuite: function () {
-            "use strict";
-            this.wasRun = true;
-
-        }
-    },
-
-    tearDownSuiteTest = {
-        test: function () {
-            "use strict";
-            assert(tearDownSuite.wasRun === false,
-                'tearDownSuite.wasRun initialised incorrectly');
-            test.suite(tearDownSuite);
-            assert(tearDownSuite.wasRun === true,
-                'tearDownSuite method is not running');
-        }
-    };
-
-errors = test.suite(testCaseTest);
-console.log(errors);
-
-errors = test.suite(setUpTest);
-console.log(errors);
-
-errors = test.suite(tearDownTest);
-console.log(errors);
-
-errors = test.suite(setUpSuiteTest);
-console.log(errors);
-
-errors = test.suite(tearDownSuiteTest);
 console.log(errors);
