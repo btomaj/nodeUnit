@@ -37,9 +37,7 @@
 function suite(testCase) {
     "use strict";
 
-    var process = require('process'),
-
-        setUpSuite = testCase.setUpSuite || function () {},
+    var setUpSuite = testCase.setUpSuite || function () {},
         setUp = testCase.setUp || function () {},
         tearDown = testCase.tearDown || function () {},
         tearDownSuite = testCase.tearDownSuite || function () {},
