@@ -37,7 +37,7 @@
 function suite(testCase) {
     "use strict";
 
-    var error = [],
+    var process = require('process'),
 
         setUpSuite = testCase.setUpSuite || function () {},
         setUp = testCase.setUp || function () {},
@@ -58,15 +58,13 @@ function suite(testCase) {
             try {
                 testCase[i]();
             } catch (e) {
-                error.push(e.message);
+                process.stdout.write(e.message + '\n');
             }
 
             tearDown.call(testCase);
         }
     }
     tearDownSuite.call(testCase);
-
-    return error;
 }
 
 // Public API
