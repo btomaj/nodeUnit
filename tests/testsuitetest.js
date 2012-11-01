@@ -1,5 +1,5 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
-var test = require('../testsuite.js'),
+var test = require('../nodeunit.js'),
     assert = require('assert'),
 
     testSuite = {
@@ -42,8 +42,6 @@ var test = require('../testsuite.js'),
             "use strict";
             delete this.testSuite;
         }
-    },
+    };
 
-    errors = test.suite(testSuite);
-
-console.log(errors);
+test.suite(testSuite);
