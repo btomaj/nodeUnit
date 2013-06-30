@@ -38,7 +38,8 @@ function suite(testCase) {
         setUp = testCase.setUp || function () {},
         tearDown = testCase.tearDown || function () {},
         tearDownSuite = testCase.tearDownSuite || function () {},
-        i;
+        i,
+        stdout;
 
     delete testCase.setUpSuite;
     delete testCase.setUp;
@@ -50,11 +51,19 @@ function suite(testCase) {
         if (testCase.hasOwnProperty(i) && typeof testCase[i] === 'function') {
             setUp.call(testCase);
 
+            stdout = '+ ' + i + '\n';
+
             try {
                 testCase[i]();
             } catch (e) {
-                process.stdout.write(e.message + '\n');
+                stdout = '- ' + i;
+                if (e.message) {
+                    stdout += ': "' + e.message + '"';
+                }
+                stdout += '\n';
             }
+
+            process.stdout.write(stdout);
 
             tearDown.call(testCase);
         }
