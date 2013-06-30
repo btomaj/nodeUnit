@@ -8,8 +8,8 @@
 /**
  * Runs a test suite.
  *
- * A test suite is defined through an object composed of an arbitrary number of
- * methods, each of which is a test case (http://en.wikipedia.org/wiki/XUnit).
+ * A test suite is an object composed of an arbitrary number of methods, each of
+ * which is a test case (http://en.wikipedia.org/wiki/XUnit).
  *
  * Four special methods can be defined to manage test fixtures:
  *  - setUpSuite,
@@ -28,9 +28,6 @@
  * @method suite
  *
  * @param testCase {Object} The object that defines the test suite.
- *
- * @return {Array} Initially an empty array that is populated with the assertion
- *      messages of failed assertions as and when assertions fail.
  *
  * @static
  */
