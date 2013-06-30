@@ -32,7 +32,7 @@
  * @static
  */
 function suite(testCase) {
-    "use strict";
+    'use strict';
 
     var setUpSuite = testCase.setUpSuite || function () {},
         setUp = testCase.setUp || function () {},

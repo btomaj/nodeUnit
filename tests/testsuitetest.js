@@ -4,7 +4,7 @@ var test = require('../nodeunit.js'),
 
     testSuite = {
         setUp: function () {
-            "use strict";
+            'use strict';
             this.testSuite = {
                 log: '',
                 setUpSuite: function () {
@@ -32,7 +32,7 @@ var test = require('../nodeunit.js'),
             };
         },
         testSuiteTest: function () {
-            "use strict";
+            'use strict';
             test.suite(this.testSuite);
             assert(this.testSuite.log === 'setUpSuite setUp testCase tearDown' +
                 ' setUp testCase tearDown tearDownSuite',
