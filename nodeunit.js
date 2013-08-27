@@ -71,7 +71,19 @@ function suite(testCase) {
     tearDownSuite.call(testCase);
 }
 
+/**
+ * @method require
+ *
+ * @param file
+ *
+ * @static
+ */
+function require() {
+    'use strict';
+}
+
 // Public API
 module.exports = {
-    suite: suite
+    suite: suite,
+    require: require
 };
