@@ -1,10 +1,21 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
+var vm = require('vm'),
+    child_process = require('child_process');
 /**
+ * TODO:
+ * For loadTestFiles, allow user to pass in directory and run all test files in that directory
+ * For loadTestFiles, handle non-test files in test directory passed by user
+ * For lodaTestFiles, test tests inside sub-folders inside user specified folder (recursive)
+ * For loadTestFiles, capture STDOUT and parse content
+ * For loadTestFiles, provide meaningful output about test results to STDOUT
+ * For loadTestFiles, allow user to see full output of all tests run
+ *
  * @module nodeUnit
  * @class test
  *
  * @static
  */
+
 /**
  * Runs a test suite.
  *
@@ -25,36 +36,37 @@
  *
  * All methods of the test suite can refer to the test case object using 'this'.
  *
- * @method suite
+ * @method evaluateTestSuite
  *
- * @param testCase {Object} The object that defines the test suite.
+ * @param testSuite {Object} The object that defines the test suite.
  *
  * @static
+ * @private
  */
-function suite(testCase) {
+function evaluateTestSuite(testSuite) {
     'use strict';
 
-    var setUpSuite = testCase.setUpSuite || function () {},
-        setUp = testCase.setUp || function () {},
-        tearDown = testCase.tearDown || function () {},
-        tearDownSuite = testCase.tearDownSuite || function () {},
+    var setUpSuite = testSuite.setUpSuite || function () {},
+        setUp = testSuite.setUp || function () {},
+        tearDown = testSuite.tearDown || function () {},
+        tearDownSuite = testSuite.tearDownSuite || function () {},
         i,
         stdout;
 
-    delete testCase.setUpSuite;
-    delete testCase.setUp;
-    delete testCase.tearDown;
-    delete testCase.tearDownSuite;
+    delete testSuite.setUpSuite;
+    delete testSuite.setUp;
+    delete testSuite.tearDown;
+    delete testSuite.tearDownSuite;
 
-    setUpSuite.call(testCase);
-    for (i in testCase) {
-        if (testCase.hasOwnProperty(i) && typeof testCase[i] === 'function') {
-            setUp.call(testCase);
+    setUpSuite.call(testSuite);
+    for (i in testSuite) {
+        if (testSuite.hasOwnProperty(i) && typeof testSuite[i] === 'function') {
+            setUp.call(testSuite);
 
             stdout = '+ ' + i + '\n';
 
             try {
-                testCase[i]();
+                testSuite[i]();
             } catch (e) {
                 stdout = '- ' + i;
                 if (e.message) {
@@ -65,25 +77,26 @@ function suite(testCase) {
 
             process.stdout.write(stdout);
 
-            tearDown.call(testCase);
+            tearDown.call(testSuite);
         }
     }
-    tearDownSuite.call(testCase);
+    tearDownSuite.call(testSuite);
 }
 
 /**
- * @method require
+ * 
+ * @method loadTestFiles
  *
- * @param file
- *
+ * @param tests {String} Absolute path to test file or folder of test files.
+ * 
  * @static
  */
-function require() {
-    'use strict';
+function loadTestFiles(tests) {
+    return child_process.execSync('node ' + tests, { encoding: 'utf-8' });
 }
 
 // Public API
 module.exports = {
-    suite: suite,
-    require: require
+    test: evaluateTestSuite,
+    load: loadTestFiles
 };

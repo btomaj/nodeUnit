@@ -18,7 +18,7 @@ var test = require('../nodeunit.js'),
 
             fs = require('fs');
         },
-        mockeryTest: function () {
+        mockeryRegisterMockReplacesFS: function () {
             'use strict';
             var mocked = fs.readFileSync();
             assert(mocked === 'success', 'readFileSync not mocked');

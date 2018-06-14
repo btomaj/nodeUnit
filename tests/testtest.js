@@ -1,5 +1,5 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
-var test = require('../nodeunit.js'),
+var nodeUnit = require('../nodeunit.js'),
     assert = require('assert'),
 
     testSuite = {
@@ -31,9 +31,9 @@ var test = require('../nodeunit.js'),
                 }
             };
         },
-        testSuiteTest: function () {
+        nodeUnitTestTestsTestSuite: function () {
             'use strict';
-            test.suite(this.testSuite);
+            nodeUnit.test(this.testSuite);
             assert(this.testSuite.log === 'setUpSuite setUp testCase tearDown' +
                 ' setUp testCase tearDown tearDownSuite',
                 'test suite methods are run incorrectly or in the wrong order');
@@ -44,4 +44,4 @@ var test = require('../nodeunit.js'),
         }
     };
 
-test.suite(testSuite);
+nodeUnit.test(testSuite);
