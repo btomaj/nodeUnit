@@ -4,12 +4,18 @@ var nodeUnit = require('../nodeunit.js'),
     path = require('path'),
 
     testSuite = {
-        nodeUnitTestExecutesFile: function () {
+        nodeUnitLoadExecutesFile: function () {
             'use strict';
-            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'child_processMockFile.js');
+            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'mockTestFile.js');
 
-            assert(fileData === '+ testCase\n', 'nodeUnit.test() does not execute file content');
+            assert(fileData === '+ testCase\n', 'nodeUnit.load() does not execute file content');
         },
+        nodeUnitLoadExecutesFilesInDirectory: function () {
+            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep);
+
+            assert(fileData === '+ testCase\n+ testCase\n', 'nodeUnit.load() does not execute files in a directory');
+        }
+
     };
 
 nodeUnit.test(testSuite);

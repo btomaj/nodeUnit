@@ -9,6 +9,7 @@ var vm = require('vm'),
  * For loadTestFiles, capture STDOUT and parse content
  * For loadTestFiles, provide meaningful output about test results to STDOUT
  * For loadTestFiles, allow user to see full output of all tests run
+ * For loadTestFiles, clean up error messages when the file or folder doesn't exist
  *
  * @module nodeUnit
  * @class test
@@ -92,6 +93,9 @@ function evaluateTestSuite(testSuite) {
  * @static
  */
 function loadTestFiles(tests) {
+    // TODO:
+    // Detect if "tests" is a file or folder before executing child_process.execSync()
+
     return child_process.execSync('node ' + tests, { encoding: 'utf-8' });
 }
 
