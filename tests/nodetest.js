@@ -51,7 +51,9 @@ var nodeUnit = require('../nodeunit.js'),
             assert(typeof directoryContents === 'object' && directoryContents !== null && Object.prototype.toString.call(directoryContents) === '[object Array]', 'fs.readdirSync() does not return array of directory contents');
         },
         child_processExecSyncCallingNodeCanHandleNonJavaScriptFile: function () {
-            var output = child_process.spawnSync('node ' + __dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', { encoding: 'utf-8' });
+            var output = child_process.spawnSync('node', [__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt'], { encoding: 'utf-8' });
+            //console.log(output);
+            //assert(output === 'example', 'child_process.spawnSync);
         },
         tearDown: function () {
             'use strict';

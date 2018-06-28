@@ -6,16 +6,20 @@ var nodeUnit = require('../nodeunit.js'),
     testSuite = {
         nodeUnitLoadExecutesFile: function () {
             'use strict';
-            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'mockTestFile.js');
+            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js');
 
             assert(fileData === '+ testCase\n', 'nodeUnit.load() does not execute file content');
         },
         nodeUnitLoadExecutesFilesInDirectory: function () {
-            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep);
+            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep);
 
-            assert(fileData === '+ testCase\n+ testCase\n', 'nodeUnit.load() does not execute files in a directory');
+            assert(fileData === '+ testCase\n+ testCase\n', 'nodeUnit.load() does not load files in a directory');
+        },
+        nodeUnitLoadHandlesErrorsInFilesInDirectory: function () {
+            var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'errorFiles' + path.sep);
+
+            assert(fileData === 'mockTestFileWithError.js failed to execute\n', 'nodeUnit.load() does not successfully handle errors in files in a directory');
         }
-
     };
 
 nodeUnit.test(testSuite);

@@ -5,15 +5,14 @@ var vm = require('vm'),
     path = require('path');
 /**
  * TODO:
- * For loadTestFiles, allow user to pass in directory and run all test files in that directory
- * For loadTestFiles, handle non-test files in test directory passed by user
- * For lodaTestFiles, test tests inside sub-folders inside user specified folder (recursive)
+ * CURRENT: For loadTestFiles, report files that could not be executed successfully
+ * For loadTestFiles, what happens when the user tries to run a file or directory that doesn't exist?
+ * For loadTestFiles, what happens when the user tries to run a non-JavaScript file?
+ * For loadTestFiles, what happens when the user tries to run a file and it has an error?
+ * For loadTestFiles, when user loads directory, recursively load files in subdirectories
  * For loadTestFiles, capture STDOUT and parse content
  * For loadTestFiles, provide meaningful output about test results to STDOUT
  * For loadTestFiles, allow user to see full output of all tests run
- * For loadTestFiles, clean up error messages when the file or folder doesn't exist
- * Decide how to handle errors in child processes when running child_process.spawnSync()
- * For loadTestFiles, change execSync() to spawnSync()
  *
  * @module nodeUnit
  * @class test
@@ -89,10 +88,12 @@ function evaluateTestSuite(testSuite) {
 }
 
 /**
- * 
+ * When testing a directory, only files with a .js extention will be executed.
+ * When testing a directory, test directory can only contain test files and supporting non-JavaScript files.
+ *
  * @method loadTestFiles
  *
- * @param tests {String} Absolute path to test file or folder of test files.
+ * @param tests {String} Absolute path to test file or directory of test files.
  * 
  * @static
  */
@@ -104,7 +105,7 @@ function loadTestFiles(tests) {
         i;
 
     if (stats.isFile() === true) {
-        return child_process.execSync('node ' + tests, { encoding: 'utf-8' });
+        output = child_process.execSync('node ' + tests, { encoding: 'utf-8' });
     } else if (stats.isDirectory() === true) {
         directoryContents = fs.readdirSync(tests);
 
@@ -112,15 +113,17 @@ function loadTestFiles(tests) {
         while (i--) {
             if (path.extname(directoryContents[i]) === '.js') {
 
-                testResults = child_process.spawnSync('node ' + tests + directoryContents[i], { encoding: 'utf-8' });
-                console.log(testResults);
+                testResults = child_process.spawnSync('node', [tests + directoryContents[i]], { encoding: 'utf-8' });
+                if (testResults.stderr) {
+                    output += directoryContents[i] + ' failed to execute\n';
+                } else {
+                    output += testResults.stdout;
+                }
             }
         }
-        console.log(output);
-    } else {
-        return '+ testCase\n+ testCase\n';
     }
-    
+
+    return output;
 }
 
 // Public API
