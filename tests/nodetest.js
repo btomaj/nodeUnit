@@ -1,9 +1,10 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
-var nodeUnit = require('../../nodeunit.js'),
+var nodeUnit = require('../nodeunit.js'),
     assert = require('assert'),
     vm = require('vm'),
     fs = require('fs'),
     path = require('path'),
+    child_process = require('child_process'),
 
     testSuite = {
         setUp: function () {
@@ -28,9 +29,29 @@ var nodeUnit = require('../../nodeunit.js'),
                 'runInNewContext does not alter sandbox');
         },
         fsReadFileSyncReturnsString: function() {
-            var fileData = fs.readFileSync(path.resolve(__dirname, 'nodetestdata.txt'), 'utf8');
+            var fileData = fs.readFileSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', 'utf8');
 
             assert(fileData === 'example', 'fs.readFileSync() does not return string');
+        },
+        fsStatSyncIsFileIdentifiesFile: function () {
+            var fileStats = fs.statSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt');
+
+            assert(fileStats.isFile() === true, 'fs.statSync().isFile() does not correctly identify a file');
+            assert(fileStats.isDirectory() === false, 'fs.statSync().isDirectory() incorrectly identifies file as directory');
+        },
+        fsStatSyncIsDirectoryIdentifiesDirectory: function () {
+            var fileStats = fs.statSync(__dirname + path.sep + 'dependencies');
+
+            assert(fileStats.isDirectory() === true, 'fs.fileSync().isDirectory() does not correctly identify a directory');
+            assert(fileStats.isFile() === false, 'fs.fileSync().isFile() incorrectly identifies directory as file');
+        },
+        fsReaddirSyncListsDirectoryContents: function () {
+            var directoryContents = fs.readdirSync(__dirname + path.sep + 'dependencies');
+
+            assert(typeof directoryContents === 'object' && directoryContents !== null && Object.prototype.toString.call(directoryContents) === '[object Array]', 'fs.readdirSync() does not return array of directory contents');
+        },
+        child_processExecSyncCallingNodeCanHandleNonJavaScriptFile: function () {
+            var output = child_process.spawnSync('node ' + __dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', { encoding: 'utf-8' });
         },
         tearDown: function () {
             'use strict';

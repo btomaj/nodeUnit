@@ -1,6 +1,8 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
 var vm = require('vm'),
-    child_process = require('child_process');
+    fs = require('fs'),
+    child_process = require('child_process'),
+    path = require('path');
 /**
  * TODO:
  * For loadTestFiles, allow user to pass in directory and run all test files in that directory
@@ -10,6 +12,8 @@ var vm = require('vm'),
  * For loadTestFiles, provide meaningful output about test results to STDOUT
  * For loadTestFiles, allow user to see full output of all tests run
  * For loadTestFiles, clean up error messages when the file or folder doesn't exist
+ * Decide how to handle errors in child processes when running child_process.spawnSync()
+ * For loadTestFiles, change execSync() to spawnSync()
  *
  * @module nodeUnit
  * @class test
@@ -93,10 +97,30 @@ function evaluateTestSuite(testSuite) {
  * @static
  */
 function loadTestFiles(tests) {
-    // TODO:
-    // Detect if "tests" is a file or folder before executing child_process.execSync()
+    var stats = fs.statSync(tests),
+        directoryContents = [],
+        output = '',
+        testResults = {},
+        i;
 
-    return child_process.execSync('node ' + tests, { encoding: 'utf-8' });
+    if (stats.isFile() === true) {
+        return child_process.execSync('node ' + tests, { encoding: 'utf-8' });
+    } else if (stats.isDirectory() === true) {
+        directoryContents = fs.readdirSync(tests);
+
+        i = directoryContents.length;
+        while (i--) {
+            if (path.extname(directoryContents[i]) === '.js') {
+
+                testResults = child_process.spawnSync('node ' + tests + directoryContents[i], { encoding: 'utf-8' });
+                console.log(testResults);
+            }
+        }
+        console.log(output);
+    } else {
+        return '+ testCase\n+ testCase\n';
+    }
+    
 }
 
 // Public API
