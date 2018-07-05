@@ -45,15 +45,20 @@ var nodeUnit = require('../nodeunit.js'),
             assert(fileStats.isDirectory() === true, 'fs.fileSync().isDirectory() does not correctly identify a directory');
             assert(fileStats.isFile() === false, 'fs.fileSync().isFile() incorrectly identifies directory as file');
         },
-        fsReaddirSyncListsDirectoryContents: function () {
+        fsReaddirSyncListsDirectoryContentsAsArray: function () {
             var directoryContents = fs.readdirSync(__dirname + path.sep + 'dependencies');
 
             assert(typeof directoryContents === 'object' && directoryContents !== null && Object.prototype.toString.call(directoryContents) === '[object Array]', 'fs.readdirSync() does not return array of directory contents');
         },
-        child_processExecSyncCallingNodeCanHandleNonJavaScriptFile: function () {
-            var output = child_process.spawnSync('node', [__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt'], { encoding: 'utf-8' });
-            //console.log(output);
-            //assert(output === 'example', 'child_process.spawnSync);
+        fsReaddirSyncListsSubdirectories: function () {
+            var directoryContents = fs.readdirSync(__dirname + path.sep + 'dependencies' + path.sep + 'recursionFiles');
+
+            assert(directoryContents.indexOf('subDirectory') > -1, 'fs.readdirSync() does not return sub directories')
+        },
+        child_processExecSyncCallingNodeLoadsJavaScriptFile: function () {
+            var output = child_process.spawnSync('node', [__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js'], { encoding: 'utf-8' });
+
+            assert(output.stdout === '+ testCase\n', 'child_process.spawnSync() does not execute node.js files');
         },
         tearDown: function () {
             'use strict';

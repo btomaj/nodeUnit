@@ -3,12 +3,9 @@ var vm = require('vm'),
     fs = require('fs'),
     child_process = require('child_process'),
     path = require('path');
+
 /**
  * TODO:
- * CURRENT: For loadTestFiles, report files that could not be executed successfully
- * For loadTestFiles, what happens when the user tries to run a file or directory that doesn't exist?
- * For loadTestFiles, what happens when the user tries to run a non-JavaScript file?
- * For loadTestFiles, what happens when the user tries to run a file and it has an error?
  * For loadTestFiles, when user loads directory, recursively load files in subdirectories
  * For loadTestFiles, capture STDOUT and parse content
  * For loadTestFiles, provide meaningful output about test results to STDOUT
@@ -88,8 +85,9 @@ function evaluateTestSuite(testSuite) {
 }
 
 /**
- * When testing a directory, only files with a .js extention will be executed.
- * When testing a directory, test directory can only contain test files and supporting non-JavaScript files.
+ * Executes tests in a directory.
+ * All files with a .js extention will be executed.
+ * Test directory should only contain test files and supporting non-JavaScript files.
  *
  * @method loadTestFiles
  *
@@ -98,22 +96,26 @@ function evaluateTestSuite(testSuite) {
  * @static
  */
 function loadTestFiles(tests) {
-    var stats = fs.statSync(tests),
+    var stats = {},
         directoryContents = [],
         output = '',
         testResults = {},
         i;
 
-    if (stats.isFile() === true) {
-        output = child_process.execSync('node ' + tests, { encoding: 'utf-8' });
-    } else if (stats.isDirectory() === true) {
+    if (fs.existsSync(tests)) {
+        stats = fs.statSync(tests);
+    } else {
+        throw tests + ' does not exist\n';
+    }
+
+    if (stats.isDirectory() === true) {
         directoryContents = fs.readdirSync(tests);
 
         i = directoryContents.length;
         while (i--) {
             if (path.extname(directoryContents[i]) === '.js') {
 
-                testResults = child_process.spawnSync('node', [tests + directoryContents[i]], { encoding: 'utf-8' });
+                testResults = child_process.spawnSync('node', [path.join(tests, directoryContents[i])], { encoding: 'utf-8' });
                 if (testResults.stderr) {
                     output += directoryContents[i] + ' failed to execute\n';
                 } else {
@@ -121,6 +123,8 @@ function loadTestFiles(tests) {
                 }
             }
         }
+    } else {
+        throw tests + ' is not a directory\n'
     }
 
     return output;
