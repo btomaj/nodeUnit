@@ -1,15 +1,14 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
-var vm = require('vm'),
-    fs = require('fs'),
+var fs = require('fs'),
     child_process = require('child_process'),
     path = require('path');
 
 /**
  * TODO:
- * For loadTestFiles, when user loads directory, recursively load files in subdirectories
  * For loadTestFiles, capture STDOUT and parse content
  * For loadTestFiles, provide meaningful output about test results to STDOUT
  * For loadTestFiles, allow user to see full output of all tests run
+ * For loadTestFiles, allow user to disable recursion
  *
  * @module nodeUnit
  * @class test
@@ -85,7 +84,7 @@ function evaluateTestSuite(testSuite) {
 }
 
 /**
- * Executes tests in a directory.
+ * Recursively loads sub directories and executes tests in directories.
  * All files with a .js extention will be executed.
  * Test directory should only contain test files and supporting non-JavaScript files.
  *
@@ -110,10 +109,16 @@ function loadTestFiles(tests) {
 
     if (stats.isDirectory() === true) {
         directoryContents = fs.readdirSync(tests);
+        i = directoryContents.length;
+        while (i--) {
+            if (fs.statSync(path.join(tests, directoryContents[i])).isDirectory()) {
+                output += loadTestFiles(path.join(tests, directoryContents[i]));
+            }
+        }
 
         i = directoryContents.length;
         while (i--) {
-            if (path.extname(directoryContents[i]) === '.js') {
+            if (fs.statSync(path.join(tests, directoryContents[i])).isFile() && path.extname(directoryContents[i]) === '.js') {
 
                 testResults = child_process.spawnSync('node', [path.join(tests, directoryContents[i])], { encoding: 'utf-8' });
                 if (testResults.stderr) {
