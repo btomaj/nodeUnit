@@ -97,6 +97,8 @@ function evaluateTestSuite(testSuite) {
  * @static
  */
 function loadTestFiles(tests) {
+    'use strict';
+
     var stats = {},
         directoryContents = [],
         output = '',
@@ -114,7 +116,7 @@ function loadTestFiles(tests) {
         i = directoryContents.length;
         while (i--) {
             if (fs.statSync(path.join(tests,
-                directoryContents[i])).isDirectory()) {
+                    directoryContents[i])).isDirectory()) {
                 output += loadTestFiles(path.join(tests, directoryContents[i]));
             }
         }
@@ -122,7 +124,7 @@ function loadTestFiles(tests) {
         i = directoryContents.length;
         while (i--) {
             if (fs.statSync(path.join(tests, directoryContents[i])).isFile() &&
-                path.extname(directoryContents[i]) === '.js') {
+                    path.extname(directoryContents[i]) === '.js') {
 
                 testResults = child_process.spawnSync('node', [path.join(tests,
                     directoryContents[i])], { encoding: 'utf-8' });
