@@ -134,7 +134,7 @@ function loadTestFiles(tests) {
             }
         }
     } else {
-        throw tests + ' is not a directory\n'
+        throw new Error(tests + ' is not a directory\n');
     }
 
     return output;
