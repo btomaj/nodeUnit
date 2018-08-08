@@ -106,7 +106,7 @@ function loadTestFiles(tests) {
     if (fs.existsSync(tests)) {
         stats = fs.statSync(tests);
     } else {
-        throw tests + ' does not exist\n';
+        throw new Error(tests + ' does not exist\n');
     }
 
     if (stats.isDirectory() === true) {
