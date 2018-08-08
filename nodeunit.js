@@ -87,7 +87,8 @@ function evaluateTestSuite(testSuite) {
 /**
  * Recursively loads sub directories and executes tests in directories.
  * All files with a .js extention will be executed.
- * Test directory should only contain test files and supporting non-JavaScript files.
+ * Test directory should only contain test files and supporting non-JavaScript
+ * files.
  *
  * @method loadTestFiles
  *
@@ -112,16 +113,19 @@ function loadTestFiles(tests) {
         directoryContents = fs.readdirSync(tests);
         i = directoryContents.length;
         while (i--) {
-            if (fs.statSync(path.join(tests, directoryContents[i])).isDirectory()) {
+            if (fs.statSync(path.join(tests,
+                directoryContents[i])).isDirectory()) {
                 output += loadTestFiles(path.join(tests, directoryContents[i]));
             }
         }
 
         i = directoryContents.length;
         while (i--) {
-            if (fs.statSync(path.join(tests, directoryContents[i])).isFile() && path.extname(directoryContents[i]) === '.js') {
+            if (fs.statSync(path.join(tests, directoryContents[i])).isFile() &&
+                path.extname(directoryContents[i]) === '.js') {
 
-                testResults = child_process.spawnSync('node', [path.join(tests, directoryContents[i])], { encoding: 'utf-8' });
+                testResults = child_process.spawnSync('node', [path.join(tests,
+                    directoryContents[i])], { encoding: 'utf-8' });
                 if (testResults.stderr) {
                     output += directoryContents[i] + ' failed to execute\n';
                 } else {
