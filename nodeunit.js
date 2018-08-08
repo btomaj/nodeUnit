@@ -5,6 +5,7 @@ var fs = require('fs'),
 
 /**
  * TODO:
+ * Fix race condition when testing asynchronous functions.
  * For loadTestFiles, capture STDOUT and parse content
  * For loadTestFiles, provide meaningful output about test results to STDOUT
  * For loadTestFiles, allow user to see full output of all tests run
