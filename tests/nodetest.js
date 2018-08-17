@@ -60,6 +60,57 @@ var nodeUnit = require('../nodeunit.js'),
 
             assert(output.stdout === '+ testCase\n', 'child_process.spawnSync() does not execute node.js files');
         },
+        '"async function ()" declared without an "await" statement is run during the main thread\'s execution': function () {
+            'use strict';
+
+            var asynchronousFunctionExecuted = false;
+            
+            (async function () {
+                asynchronousFunctionExecuted = true;
+            })();
+
+            assert(asynchronousFunctionExecuted === true, 'Asynchronous function was run after main thread completed execution');
+        },
+        '"async function ()" declared with an "await" statement is run after the main thread\'s execution': function () {
+            'use strict';
+
+            var asynchronousFunctionExecuted = false,
+                i;
+            
+            (async function () {
+                await (function () {})();
+                asynchronousFunctionExecuted = true;
+            })();
+
+            assert(asynchronousFunctionExecuted === false, 'Asynchronous functions was run during main thread execution');
+        },
+        /*'Asynchronous functions can await other async functions': function () {
+            'use strict';
+
+            var asynchronousFunctionExecuted = false;
+            
+            (async function () {
+                var asynchronousFunctionExecuted = true;
+            })();
+
+            assert(asynchronousFunctionExecuted === false, 'Asynchronous functions are run before main thread completes execution');
+        },*/
+        'wait inside try catch block catches async errors ': async function () {
+            'use strict';
+
+            var returnedError = '',
+                foo = async function () {
+                    throw new Error('Caught.');
+                };
+
+            try {
+                await foo();
+            } catch (e) {
+                returnedError = e.message;
+            }
+
+            assert(returnedError === 'Caught.', 'Errors inside asynchronous functions are not caught when using await.')
+        },
         tearDown: function () {
             'use strict';
             delete this.sandbox;

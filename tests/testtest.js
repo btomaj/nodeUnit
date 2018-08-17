@@ -12,30 +12,26 @@ var nodeUnit = require('../nodeunit.js'),
                 },
                 setUp: function () {
                     this.log += 'setUp ';
-
                 },
-                testCaseOne: function () {
-                    this.log += 'testCase ';
-
+                testCaseOne: async function () {
+                    this.log += 'testCaseOne ';
                 },
                 testCaseTwo: function () {
-                    this.log += 'testCase ';
+                    this.log += 'testCaseTwo ';
                 },
                 tearDown: function () {
                     this.log += 'tearDown ';
-
                 },
                 tearDownSuite: function () {
                     this.log += 'tearDownSuite';
-
                 }
             };
         },
         nodeUnitTestTestsTestSuite: function () {
             'use strict';
             nodeUnit.test(this.testSuite);
-            assert(this.testSuite.log === 'setUpSuite setUp testCase tearDown' +
-                ' setUp testCase tearDown tearDownSuite',
+            assert(this.testSuite.log === 'setUpSuite setUp testCaseOne tearDown' +
+                ' setUp testCaseTwo tearDown tearDownSuite',
                 'test suite methods are run incorrectly or in the wrong order');
         },
         tearDown: function () {
