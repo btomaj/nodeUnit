@@ -18,18 +18,18 @@ var nodeUnit = require('../nodeunit.js'),
             try {
                 nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'NoFile.js');
 
-                assert(true === false); // always throw error
+                assert(true === false); // force catch clause if file exists
             } catch (e) {
-                assert(e === __dirname + path.sep + 'dependencies' + path.sep + 'NoFile.js' + ' does not exist\n', 'nodeUnit.load() does not handle invalid paths.');
+                assert(e.message === __dirname + path.sep + 'dependencies' + path.sep + 'NoFile.js' + ' does not exist\n', 'nodeUnit.load() does not handle invalid paths.');
             }
         },
         nodeUnitLoadRejectsFile: function () {
             try {
                 nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js');
 
-                assert(true === false); // always throw error
+                assert(true === false); // force catch clause if file exists
             } catch (e) {
-                assert(e === __dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js' + ' is not a directory\n', 'nodeUnit.load() does not handle files.');
+                assert(e.message === __dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js' + ' is not a directory\n', 'nodeUnit.load() does not handle files.');
             }
         },
         nodeUnitLoadHandlesPathWithoutTrailingSlash: function () {
