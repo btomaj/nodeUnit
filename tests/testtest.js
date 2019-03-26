@@ -13,7 +13,7 @@ var nodeUnit = require('../nodeunit.js'),
                 setUp: function () {
                     this.log += 'setUp ';
                 },
-                testCaseOne: async function () {
+                testCaseOne: function () {
                     this.log += 'testCaseOne ';
                 },
                 testCaseTwo: function () {
@@ -27,12 +27,16 @@ var nodeUnit = require('../nodeunit.js'),
                 }
             };
         },
-        nodeUnitTestTestsTestSuite: function () {
+        'nodeUnit.test() tests a test suite': function () {
             'use strict';
             nodeUnit.test(this.testSuite);
-            assert(this.testSuite.log === 'setUpSuite setUp testCaseOne tearDown' +
-                ' setUp testCaseTwo tearDown tearDownSuite',
+            assert(this.testSuite.log === 'setUpSuite setUp testCaseOne tearDown setUp testCaseTwo tearDown tearDownSuite',
                 'test suite methods are run incorrectly or in the wrong order');
+        },
+        'nodeUnit.test() catches errors from async functions': async function () {
+            'use strict';
+
+            throw new Error('Asynchronous error');
         },
         tearDown: function () {
             "use strict";
