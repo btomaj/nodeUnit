@@ -1,4 +1,4 @@
-/*jslint node: true, indent: 4, maxlen: 80 */
+/*jslint node: true, indent: 4 */
 var nodeUnit = require('../nodeunit.js'),
     assert = require('assert'),
     vm = require('vm'),
