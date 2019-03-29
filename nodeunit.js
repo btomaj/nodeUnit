@@ -45,7 +45,7 @@ var fs = require('fs'),
  * @static
  * @private
  */
-function evaluateTestSuite(testSuite) {
+async function evaluateTestSuite(testSuite) {
     'use strict';
 
     var setUpSuite = testSuite.setUpSuite || function () {},
@@ -68,7 +68,7 @@ function evaluateTestSuite(testSuite) {
             stdout = '+ ' + i + '\n';
 
             try {
-                testSuite[i]();
+                await testSuite[i]();
             } catch (e) {
                 stdout = '- ' + i;
                 if (e.message) {

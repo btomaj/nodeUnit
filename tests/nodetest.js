@@ -84,17 +84,6 @@ var nodeUnit = require('../nodeunit.js'),
 
             assert(asynchronousFunctionExecuted === false, 'Asynchronous functions was run during main thread execution');
         },
-        /*'Asynchronous functions can await other async functions': function () {
-            'use strict';
-
-            var asynchronousFunctionExecuted = false;
-            
-            (async function () {
-                var asynchronousFunctionExecuted = true;
-            })();
-
-            assert(asynchronousFunctionExecuted === false, 'Asynchronous functions are run before main thread completes execution');
-        },*/
         'wait inside try catch block catches async errors ': async function () {
             'use strict';
 
@@ -110,6 +99,48 @@ var nodeUnit = require('../nodeunit.js'),
             }
 
             assert(returnedError === 'Caught.', 'Errors inside asynchronous functions are not caught when using await.')
+        },
+        'Object.keys()[0] correctly calls the first member': function () {
+            'use strict';
+
+            var testSuite = {
+               one: true,
+            };
+
+            assert(Object.keys(testSuite)[0] === 'one', 'Object.keys()[0] does not call the first member')
+        },
+        'delete testSuite[Object.keys(testSuite)[0]] correctly removes the first member': function () {
+            'use strict';
+
+            var testSuite = {
+               one: true,
+               two: true
+            };
+
+            delete testSuite[Object.keys(testSuite)[0]];
+
+            assert(Object.keys(testSuite)[0] === 'two', 'delete testSuite[Object.keys()[0]] does not remove the first member')
+        },
+        'Recursive function can iterate over object members': function () {
+            'use strict';
+
+            var numberedObject = {
+                    one: true,
+                    two: true
+                },
+                log = '',
+                iterator = function (iteratingObject) {
+                    if (Object.keys(iteratingObject)[0]) {
+                        log += Object.keys(iteratingObject)[0];
+                        delete iteratingObject[Object.keys(iteratingObject)[0]];
+
+                        iterator(iteratingObject);
+                    }
+                };
+
+            iterator(numberedObject);
+
+            assert(log === 'onetwo', 'Members not iterated or iterated in the wrong order.')
         },
         tearDown: function () {
             'use strict';

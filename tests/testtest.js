@@ -13,10 +13,10 @@ var nodeUnit = require('../nodeunit.js'),
                 setUp: function () {
                     this.log += 'setUp ';
                 },
-                testCaseOne: function () {
+                testCaseOne: async function () {
                     this.log += 'testCaseOne ';
                 },
-                testCaseTwo: function () {
+                testCaseTwo: async function () {
                     this.log += 'testCaseTwo ';
                 },
                 tearDown: function () {
@@ -27,16 +27,28 @@ var nodeUnit = require('../nodeunit.js'),
                 }
             };
         },
-        'nodeUnit.test() tests a test suite': function () {
+        'nodeUnit.test() tests a test suite': async function () {
             'use strict';
-            nodeUnit.test(this.testSuite);
+            await nodeUnit.test(this.testSuite);
             assert(this.testSuite.log === 'setUpSuite setUp testCaseOne tearDown setUp testCaseTwo tearDown tearDownSuite',
                 'test suite methods are run incorrectly or in the wrong order');
         },
-        'nodeUnit.test() catches errors from async functions': async function () {
+        'nodeUnit.test() waits for async functions': async function () {
             'use strict';
 
-            throw new Error('Asynchronous error');
+            var asynchronousFunctionExecuted = false,
+                asynchronousFunction = function (ms) {
+                    return new Promise(function (resolve, reject) {
+                        setTimeout(function () {
+                            asynchronousFunctionExecuted = true;
+                            resolve();
+                        }, ms);
+                    });
+                };
+
+            await asynchronousFunction(1);
+            
+            assert(asynchronousFunctionExecuted === true, 'nodeUnit.test() does not wait for async functions');
         },
         tearDown: function () {
             "use strict";
