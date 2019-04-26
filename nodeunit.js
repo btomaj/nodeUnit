@@ -4,14 +4,6 @@ var fs = require('fs'),
     path = require('path');
 
 /**
- * TODO:
- * Fix race condition when testing asynchronous functions.
- * Add async await to evaluateTestSuite
- * For loadTestFiles, capture STDOUT and parse content
- * For loadTestFiles, provide meaningful output about test results to STDOUT
- * For loadTestFiles, allow user to see full output of all tests run
- * For loadTestFiles, allow user to disable recursion
- *
  * @module nodeUnit
  * @class test
  *
@@ -37,6 +29,9 @@ var fs = require('fs'),
  * ignored.
  *
  * All methods of the test suite can refer to the test case object using 'this'.
+ *
+ * TODO
+ * Run tests in order when multiple test cases are defined in the same file
  *
  * @method evaluateTestSuite
  *
@@ -90,6 +85,16 @@ async function evaluateTestSuite(testSuite) {
  * All files with a .js extention will be executed.
  * Test directory should only contain test files and supporting non-JavaScript
  * files.
+ *
+ * XXX Consider using nodeUnit.load to load the file that needs to be tested
+ *  into the testing script and moving current functionality into separate
+ *  utility file.
+ * 
+ * TODO
+ * Summarise test results
+ * Supress test output
+ * Provide verbose option
+ * Prevent loading sub directories
  *
  * @method loadTestFiles
  *
