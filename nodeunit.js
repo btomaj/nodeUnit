@@ -31,7 +31,8 @@ var fs = require('fs'),
  * All methods of the test suite can refer to the test case object using 'this'.
  *
  * TODO
- * Run tests in order when multiple test cases are defined in the same file
+ * Supress test output
+ * Provide verbose option
  *
  * @method evaluateTestSuite
  *
@@ -47,8 +48,10 @@ async function evaluateTestSuite(testSuite) {
         setUp = testSuite.setUp || function () {},
         tearDown = testSuite.tearDown || function () {},
         tearDownSuite = testSuite.tearDownSuite || function () {},
-        i,
-        stdout;
+        testCase,
+        i = 0,
+        j = 0,
+        stdout = "";
 
     delete testSuite.setUpSuite;
     delete testSuite.setUp;
@@ -56,16 +59,21 @@ async function evaluateTestSuite(testSuite) {
     delete testSuite.tearDownSuite;
 
     setUpSuite.call(testSuite);
-    for (i in testSuite) {
-        if (testSuite.hasOwnProperty(i) && typeof testSuite[i] === 'function') {
+    for (testCase in testSuite) {
+        if (testSuite.hasOwnProperty(testCase) &&
+                typeof testSuite[testCase] === 'function') {
+            i += 1;
+
             setUp.call(testSuite);
 
-            stdout = '+ ' + i + '\n';
+            stdout = '+ ' + testCase + '\n';
 
             try {
-                await testSuite[i]();
+                await testSuite[testCase]();
             } catch (e) {
-                stdout = '- ' + i;
+                j += 1;
+
+                stdout = '- ' + testCase;
                 if (e.message) {
                     stdout += ': "' + e.message + '"';
                 }
@@ -78,6 +86,8 @@ async function evaluateTestSuite(testSuite) {
         }
     }
     tearDownSuite.call(testSuite);
+
+    process.stdout.write(i + " test(s) run; " + j + " test(s) failed.\n");
 }
 
 /**
@@ -91,9 +101,6 @@ async function evaluateTestSuite(testSuite) {
  *  utility file.
  * 
  * TODO
- * Summarise test results
- * Supress test output
- * Provide verbose option
  * Prevent loading sub directories
  *
  * @method loadTestFiles

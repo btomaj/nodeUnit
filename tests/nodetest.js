@@ -28,7 +28,7 @@ var nodeUnit = require('../nodeunit.js'),
             assert(this.sandbox.test === true,
                 'runInNewContext does not alter sandbox');
         },
-        fsReadFileSyncReturnsString: function() {
+        "fs.ReadFileSync returns string": function () {
             var fileData = fs.readFileSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', 'utf8');
 
             assert(fileData === 'example', 'fs.readFileSync() does not return string');
