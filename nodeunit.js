@@ -1,5 +1,6 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
 var fs = require("fs"),
+    vm = require("vm"),
     os = require("os"),
     child_process = require("child_process"),
     path = require("path");
@@ -112,7 +113,7 @@ async function evaluateTestSuite(testSuite) {
  * @static
  * @private
  */
-function loadTestFiles(tests) {
+function loadDirectory(tests) {
     'use strict';
 
     var stats = {},
@@ -159,8 +160,33 @@ function loadTestFiles(tests) {
     return output;
 }
 
+/**
+ * Loads the file to be tested into the context of the test file so that its
+ * code can be exercised.
+ *
+ * TODO
+ * Write test to load content into test file context to be tested
+ * Make asynchronous
+ *
+ * @method loadFile
+ *
+ * @param {string} filePath
+ *
+ * @static
+ * @private
+ */
+function loadFile(filePath) {
+    "use strict";
+
+    var caller = module.parent.filename;
+    caller = caller.slice(0, caller.lastIndexOf("/") + 1);
+
+    //vm.runInThisContext(fs.readFileSync(path.join(caller, filePath), "utf-8"));
+    return fs.readFileSync(path.join(caller, filePath), "utf-8");
+}
+
 // Public API
 module.exports = {
     test: evaluateTestSuite,
-    load: loadTestFiles
+    load: loadFile
 };

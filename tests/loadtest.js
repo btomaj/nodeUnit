@@ -3,7 +3,7 @@ var nodeUnit = require('../nodeunit.js'),
     assert = require('assert'),
     path = require('path'),
 
-    testSuite = {
+    /*testSuite = {
         nodeUnitLoadExecutesFilesInDirectory: function () {
             var fileData = nodeUnit.load(__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep);
 
@@ -42,6 +42,16 @@ var nodeUnit = require('../nodeunit.js'),
 
             assert(fileData === '+ testCase\n+ testCase\n', 'nodeUnit.load() does not run tests in sub directories.');
         }
-    }
+    }*/
 
-nodeUnit.test(testSuite);
+    loadTestSuite = {
+        "test nodeUnit.load() loads file content": function () {
+            "use strict";
+
+            var fileData = nodeUnit.load('dependencies' + path.sep + 'nodetestdata.txt', 'utf8');
+
+            assert(fileData === "example", "nodeUnit.load() does not return file content");
+        }
+    };
+
+nodeUnit.test(loadTestSuite);
