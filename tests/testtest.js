@@ -97,7 +97,7 @@ var nodeUnit = require('../nodeunit.js'),
 
             process.stdout.write = write;
 
-            assert(output === "2 test(s) run; 1 test(s) failed.\n");
+            assert(output === "2 test(s) run; 1 test(s) failed.\n", "Test results summarised incorrectly");
         },
         /*'test nodeUnit.test() waits for tests to complete before moving on': function () {
             'use strict';
