@@ -1,7 +1,8 @@
 /*jslint node: true, indent: 4, maxlen: 80 */
-var fs = require('fs'),
-    child_process = require('child_process'),
-    path = require('path');
+var fs = require("fs"),
+    os = require("os"),
+    child_process = require("child_process"),
+    path = require("path");
 
 /**
  * @module nodeUnit
@@ -66,7 +67,7 @@ async function evaluateTestSuite(testSuite) {
 
             setUp.call(testSuite);
 
-            stdout = '+ ' + testCase + '\n';
+            stdout = "+ " + testCase + os.EOL;
 
             try {
                 await testSuite[testCase]();
@@ -77,7 +78,7 @@ async function evaluateTestSuite(testSuite) {
                 if (e.message) {
                     stdout += ': "' + e.message + '"';
                 }
-                stdout += '\n';
+                stdout += os.EOL;
             }
 
             process.stdout.write(stdout);
@@ -87,7 +88,8 @@ async function evaluateTestSuite(testSuite) {
     }
     tearDownSuite.call(testSuite);
 
-    process.stdout.write(i + " test(s) run; " + j + " test(s) failed.\n");
+    process.stdout.write(i + " test(s) run; " + j + " test(s) failed." +
+        os.EOL);
 }
 
 /**
@@ -108,6 +110,7 @@ async function evaluateTestSuite(testSuite) {
  * @param tests {String} Absolute path to test file or directory of test files.
  * 
  * @static
+ * @private
  */
 function loadTestFiles(tests) {
     'use strict';
@@ -121,7 +124,7 @@ function loadTestFiles(tests) {
     if (fs.existsSync(tests)) {
         stats = fs.statSync(tests);
     } else {
-        throw new Error(tests + ' does not exist\n');
+        throw new Error(tests + ' does not exist' + os.EOL);
     }
 
     if (stats.isDirectory() === true) {
@@ -142,14 +145,15 @@ function loadTestFiles(tests) {
                 testResults = child_process.spawnSync('node', [path.join(tests,
                     directoryContents[i])], { encoding: 'utf-8' });
                 if (testResults.stderr) {
-                    output += directoryContents[i] + ' failed to execute\n';
+                    output += directoryContents[i] + ' failed to execute' +
+                        os.EOL;
                 } else {
                     output += testResults.stdout;
                 }
             }
         }
     } else {
-        throw new Error(tests + ' is not a directory\n');
+        throw new Error(tests + ' is not a directory' + os.EOL);
     }
 
     return output;
