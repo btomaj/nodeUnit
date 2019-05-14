@@ -28,7 +28,17 @@ var nodeUnit = require('../nodeunit.js'),
             assert(this.sandbox.test === true,
                 'runInNewContext does not alter sandbox');
         },
+        "test vm.runInNewContext() gives access to require()": function () {
+            "use strict";
+
+            this.sandbox.require = require;
+            vm.runInNewContext("var fs = require('fs');", this.sandbox);
+
+            assert(this.sandbox.fs === fs);
+        },
         "fs.ReadFileSync returns string": function () {
+            "use strict";
+
             var fileData = fs.readFileSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', 'utf8');
 
             assert(fileData === 'example', 'fs.readFileSync() does not return string');

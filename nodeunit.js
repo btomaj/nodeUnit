@@ -2,7 +2,6 @@
 var fs = require("fs"),
     vm = require("vm"),
     os = require("os"),
-    child_process = require("child_process"),
     path = require("path");
 
 /**
@@ -94,83 +93,15 @@ async function evaluateTestSuite(testSuite) {
 }
 
 /**
- * Recursively loads sub directories and executes tests in directories.
- * All files with a .js extention will be executed.
- * Test directory should only contain test files and supporting non-JavaScript
- * files.
- *
- * XXX Consider using nodeUnit.load to load the file that needs to be tested
- *  into the testing script and moving current functionality into separate
- *  utility file.
- * 
- * TODO
- * Prevent loading sub directories
- *
- * @method loadTestFiles
- *
- * @param tests {String} Absolute path to test file or directory of test files.
- * 
- * @static
- * @private
- */
-function loadDirectory(tests) {
-    'use strict';
-
-    var stats = {},
-        directoryContents = [],
-        output = '',
-        testResults = {},
-        i;
-
-    if (fs.existsSync(tests)) {
-        stats = fs.statSync(tests);
-    } else {
-        throw new Error(tests + ' does not exist' + os.EOL);
-    }
-
-    if (stats.isDirectory() === true) {
-        directoryContents = fs.readdirSync(tests);
-        i = directoryContents.length;
-        while (i--) {
-            if (fs.statSync(path.join(tests,
-                    directoryContents[i])).isDirectory()) {
-                output += loadTestFiles(path.join(tests, directoryContents[i]));
-            }
-        }
-
-        i = directoryContents.length;
-        while (i--) {
-            if (fs.statSync(path.join(tests, directoryContents[i])).isFile() &&
-                    path.extname(directoryContents[i]) === '.js') {
-
-                testResults = child_process.spawnSync('node', [path.join(tests,
-                    directoryContents[i])], { encoding: 'utf-8' });
-                if (testResults.stderr) {
-                    output += directoryContents[i] + ' failed to execute' +
-                        os.EOL;
-                } else {
-                    output += testResults.stdout;
-                }
-            }
-        }
-    } else {
-        throw new Error(tests + ' is not a directory' + os.EOL);
-    }
-
-    return output;
-}
-
-/**
  * Loads the file to be tested into the context of the test file so that its
  * code can be exercised.
  *
  * TODO
- * Write test to load content into test file context to be tested
  * Make asynchronous
  *
  * @method loadFile
  *
- * @param {string} filePath
+ * @param {string} filePath Relative path from the test file to the file to load
  *
  * @static
  * @private
@@ -181,8 +112,11 @@ function loadFile(filePath) {
     var caller = module.parent.filename;
     caller = caller.slice(0, caller.lastIndexOf("/") + 1);
 
-    //vm.runInThisContext(fs.readFileSync(path.join(caller, filePath), "utf-8"));
-    return fs.readFileSync(path.join(caller, filePath), "utf-8");
+    global.require = require;
+    global.__filename = __filename;
+    global.__dirname = __dirname;
+
+    vm.runInThisContext(fs.readFileSync(path.join(caller, filePath), "utf-8"));
 }
 
 // Public API
