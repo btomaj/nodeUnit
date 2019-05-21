@@ -43,8 +43,7 @@ var fs = require("fs"),
  * All methods of the test suite can refer to the test case object using 'this'.
  *
  * TODO
- * Supress test output
- * Provide verbose option
+ * Run test suites in sequence
  *
  * @method evaluateTestSuite
  *
@@ -64,7 +63,7 @@ async function evaluateTestSuite(testSuite) {
 
         testsRun = 0,
         testsFailed = 0,
-        stdout = "";
+        testResult = "";
 
     delete testSuite.setUpSuite;
     delete testSuite.setUp;
@@ -79,29 +78,29 @@ async function evaluateTestSuite(testSuite) {
 
             setUp.call(testSuite);
 
-            stdout = "+ " + testCase + os.EOL;
-
             try {
                 await testSuite[testCase]();
+
+                testResult = "+ " + testCase;
             } catch (e) {
                 testsFailed += 1;
 
-                stdout = '- ' + testCase;
+                testResult = "- " + testCase;
                 if (e.message) {
-                    stdout += ': "' + e.message + '"';
+                    testResult += ": '" + e.message + "'";
                 }
-                stdout += os.EOL;
             }
 
-            process.stdout.write(stdout);
-
             tearDown.call(testSuite);
+
+            if (mode === "--verbose" || testResult.indexOf("-") === 0) {
+                console.log(testResult);
+            }
         }
     }
     tearDownSuite.call(testSuite);
 
-    process.stdout.write(i + " test(s) run; " + j + " test(s) failed." +
-        os.EOL);
+    console.log(testsRun + " test(s) run; " + testsFailed + " test(s) failed.");
 }
 
 /**
