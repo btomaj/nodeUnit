@@ -1,32 +1,33 @@
 /*jslint node: true, indent: 4 */
-var nodeUnit = require('../nodeunit.js'),
-    assert = require('assert'),
-    vm = require('vm'),
-    fs = require('fs'),
-    path = require('path'),
-    child_process = require('child_process'),
+var nodeUnit = require("../nodeunit.js"),
+    assert = require("assert"),
+    vm = require("vm"),
+    fs = require("fs"),
+    path = require("path"),
+    child_process = require("child_process"),
+    os = require("os"),
 
-    testSuite = {
+    vmTestSuite = {
         setUp: function () {
-            'use strict';
+            "use strict";
             this.sandbox = {
                 test: false
             };
         },
-        vmRunInContextAltersContext: function () {
-            'use strict';
+        "vm.runInContext alters context": function () {
+            "use strict";
             var context = vm.createContext(this.sandbox);
-            vm.runInContext('test = true;', context);
+            vm.runInContext("test = true;", context);
 
             assert(context.test === true,
-                'runInContext code does not access sandbox');
+                "runInContext code does not access sandbox");
         },
-        vmRunInNewContextAltersSandbox: function () {
-            'use strict';
-            vm.runInNewContext('test = true;', this.sandbox);
+        "vm.runInNewContext alters sandbox": function () {
+            "use strict";
+            vm.runInNewContext("test = true;", this.sandbox);
 
             assert(this.sandbox.test === true,
-                'runInNewContext does not alter sandbox');
+                "runInNewContext does not alter sandbox");
         },
         "test vm.runInNewContext() gives access to require()": function () {
             "use strict";
@@ -36,53 +37,58 @@ var nodeUnit = require('../nodeunit.js'),
 
             assert(this.sandbox.fs === fs);
         },
+        tearDown: function () {
+            "use strict";
+            delete this.sandbox;
+        }
+    },
+
+    fsTestSuite = {
         "fs.ReadFileSync returns string": function () {
             "use strict";
 
-            var fileData = fs.readFileSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt', 'utf8');
+            var fileData = fs.readFileSync(path.join(__dirname, "dependencies", "testdata.txt"), "utf8");
 
-            assert(fileData === 'example', 'fs.readFileSync() does not return string');
+            assert(fileData === "example", "fs.readFileSync() does not return string");
         },
-        fsStatSyncIsFileIdentifiesFile: function () {
-            var fileStats = fs.statSync(__dirname + path.sep + 'dependencies' + path.sep + 'nodetestdata.txt');
+        "fs.statSync.isFile() identifies file": function () {
+            var fileStats = fs.statSync(path.join(__dirname, "dependencies", "testdata.txt"));
 
-            assert(fileStats.isFile() === true, 'fs.statSync().isFile() does not correctly identify a file');
-            assert(fileStats.isDirectory() === false, 'fs.statSync().isDirectory() incorrectly identifies file as directory');
+            assert(fileStats.isFile() === true, "fs.statSync().isFile() does not correctly identify a file");
+            assert(fileStats.isDirectory() === false, "fs.statSync().isDirectory() incorrectly identifies file as directory");
         },
-        fsStatSyncIsDirectoryIdentifiesDirectory: function () {
-            var fileStats = fs.statSync(__dirname + path.sep + 'dependencies');
+        "fs.statSync.isDirectory() identifies directory": function () {
+            var fileStats = fs.statSync(path.join(__dirname, "dependencies"));
 
-            assert(fileStats.isDirectory() === true, 'fs.fileSync().isDirectory() does not correctly identify a directory');
-            assert(fileStats.isFile() === false, 'fs.fileSync().isFile() incorrectly identifies directory as file');
+            assert(fileStats.isDirectory() === true, "fs.fileSync().isDirectory() does not correctly identify a directory");
+            assert(fileStats.isFile() === false, "fs.fileSync().isFile() incorrectly identifies directory as file");
         },
-        fsReaddirSyncListsDirectoryContentsAsArray: function () {
-            var directoryContents = fs.readdirSync(__dirname + path.sep + 'dependencies');
+        "fs.readdirSync lists directory contents as array": function () {
+            var directoryContents = fs.readdirSync(path.join(__dirname, "dependencies"));
 
-            assert(typeof directoryContents === 'object' && directoryContents !== null && Object.prototype.toString.call(directoryContents) === '[object Array]', 'fs.readdirSync() does not return array of directory contents');
+            assert(typeof directoryContents === "object" && directoryContents !== null && Object.prototype.toString.call(directoryContents) === "[object Array]", "fs.readdirSync() does not return array of directory contents");
         },
-        fsReaddirSyncListsSubdirectories: function () {
-            var directoryContents = fs.readdirSync(__dirname + path.sep + 'dependencies' + path.sep + 'recursionFiles');
+        "fs.readdirSync lists subdirectories": function () {
+            var directoryContents = fs.readdirSync(path.join(__dirname, "dependencies", "recursionFiles"));
 
-            assert(directoryContents.indexOf('subDirectory') > -1, 'fs.readdirSync() does not return sub directories')
-        },
-        child_processExecSyncCallingNodeLoadsJavaScriptFile: function () {
-            var output = child_process.spawnSync('node', [__dirname + path.sep + 'dependencies' + path.sep + 'successFiles' + path.sep + 'mockTestFile.js'], { encoding: 'utf-8' });
+            assert(directoryContents.indexOf("subDirectory") > -1, "fs.readdirSync() does not return sub directories");
+        }
+    },
 
-            assert(output.stdout === '+ testCase\n', 'child_process.spawnSync() does not execute node.js files');
-        },
-        '"async function ()" declared without an "await" statement is run during the main thread\'s execution': function () {
-            'use strict';
+    asyncTestSuite = {
+        "test 'async function ()' declared without an 'await' statement is run during the main thread's execution": function () {
+            "use strict";
 
             var asynchronousFunctionExecuted = false;
-            
+
             (async function () {
                 asynchronousFunctionExecuted = true;
             })();
 
-            assert(asynchronousFunctionExecuted === true, 'Asynchronous function was run after main thread completed execution');
+            assert(asynchronousFunctionExecuted === true, "Asynchronous function was run after main thread completed execution");
         },
-        '"async function ()" declared with an "await" statement is run after the main thread\'s execution': function () {
-            'use strict';
+        "test 'async function ()' declared with an 'await' statement is run after the main thread's execution": function () {
+            "use strict";
 
             var asynchronousFunctionExecuted = false,
                 i;
@@ -92,14 +98,14 @@ var nodeUnit = require('../nodeunit.js'),
                 asynchronousFunctionExecuted = true;
             })();
 
-            assert(asynchronousFunctionExecuted === false, 'Asynchronous functions was run during main thread execution');
+            assert(asynchronousFunctionExecuted === false, "Asynchronous functions was run during main thread execution");
         },
-        'wait inside try catch block catches async errors ': async function () {
-            'use strict';
+        "test wait inside try catch block catches async errors ": async function () {
+            "use strict";
 
-            var returnedError = '',
+            var returnedError = "",
                 foo = async function () {
-                    throw new Error('Caught.');
+                    throw new Error("Caught.");
                 };
 
             try {
@@ -108,19 +114,28 @@ var nodeUnit = require('../nodeunit.js'),
                 returnedError = e.message;
             }
 
-            assert(returnedError === 'Caught.', 'Errors inside asynchronous functions are not caught when using await.')
+            assert(returnedError === "Caught.", "Errors inside asynchronous functions are not caught when using await.")
+        }
+    },
+
+    miscTestSuite = {
+        "test child_process.execSync calling 'node' loads JavaScript file": function () {
+            var expectedOutput = "1 test(s) run; 0 test(s) failed." + os.EOL,
+                returnedOutput = child_process.spawnSync("node", [path.join(__dirname, "dependencies", "successFiles", "mockTestFileOne.js")], { encoding: "utf-8" }).stdout;
+
+            assert(returnedOutput === expectedOutput, "Unexpected stdout from child_process");
         },
-        'Object.keys()[0] correctly calls the first member': function () {
-            'use strict';
+        "test Object.keys()[0] correctly calls the first member": function () {
+            "use strict";
 
             var testSuite = {
                one: true,
             };
 
-            assert(Object.keys(testSuite)[0] === 'one', 'Object.keys()[0] does not call the first member')
+            assert(Object.keys(testSuite)[0] === "one", "Object.keys()[0] does not call the first member")
         },
-        'delete testSuite[Object.keys(testSuite)[0]] correctly removes the first member': function () {
-            'use strict';
+        "tests delete testSuite[Object.keys(testSuite)[0]] correctly removes the first member": function () {
+            "use strict";
 
             var testSuite = {
                one: true,
@@ -129,16 +144,16 @@ var nodeUnit = require('../nodeunit.js'),
 
             delete testSuite[Object.keys(testSuite)[0]];
 
-            assert(Object.keys(testSuite)[0] === 'two', 'delete testSuite[Object.keys()[0]] does not remove the first member')
+            assert(Object.keys(testSuite)[0] === "two", "delete testSuite[Object.keys()[0]] does not remove the first member")
         },
-        'Recursive function can iterate over object members': function () {
-            'use strict';
+        "test recursive function can iterate over object members": function () {
+            "use strict";
 
             var numberedObject = {
                     one: true,
                     two: true
                 },
-                log = '',
+                log = "",
                 iterator = function (iteratingObject) {
                     if (Object.keys(iteratingObject)[0]) {
                         log += Object.keys(iteratingObject)[0];
@@ -150,12 +165,11 @@ var nodeUnit = require('../nodeunit.js'),
 
             iterator(numberedObject);
 
-            assert(log === 'onetwo', 'Members not iterated or iterated in the wrong order.')
+            assert(log === "onetwo", "Members not iterated or iterated in the wrong order.")
         },
-        tearDown: function () {
-            'use strict';
-            delete this.sandbox;
-        }
     };
 
-nodeUnit.test(testSuite);
+nodeUnit.test(vmTestSuite);
+nodeUnit.test(fsTestSuite);
+nodeUnit.test(asyncTestSuite);
+nodeUnit.test(miscTestSuite);
