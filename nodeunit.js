@@ -1,18 +1,29 @@
-/*jslint node: true, indent: 4, maxlen: 80 */
-var fs = require("fs"),
-    vm = require("vm"),
-    os = require("os"),
-    path = require("path");
+/*jslint node */
 
 /**
+ * When the test file is called with the --verbose argument, e.g.
+ * "node path/to/testfile.js --verbose", nodeUnit reports the test result of
+ * each test case in the test suite. The output takes the format of
+ * "+ testCaseName" for tests that pass and "- testCaseName" for tests that
+ * fail.
+ *
+ * In all cases, nodeUnit provides a summary of the test results in the format:
+ * "X test(s) run; Y test(s) failed."
+ *
  * @module nodeUnit
- * @class test
+ * @class nodeUnit
  *
  * @static
  */
+var fs = require("fs"),
+    vm = require("vm"),
+    os = require("os"),
+    path = require("path"),
+    process = require("process"),
+    mode = process.argv.slice(2)[0];
 
 /**
- * Runs a test suite.
+ * Tests a test suite.
  *
  * A test suite is an object composed of an arbitrary number of methods, each of
  * which is a test case (http://en.wikipedia.org/wiki/XUnit).
@@ -43,15 +54,16 @@ var fs = require("fs"),
  * @private
  */
 async function evaluateTestSuite(testSuite) {
-    'use strict';
+    "use strict";
 
     var setUpSuite = testSuite.setUpSuite || function () {},
         setUp = testSuite.setUp || function () {},
         tearDown = testSuite.tearDown || function () {},
         tearDownSuite = testSuite.tearDownSuite || function () {},
         testCase,
-        i = 0,
-        j = 0,
+
+        testsRun = 0,
+        testsFailed = 0,
         stdout = "";
 
     delete testSuite.setUpSuite;
@@ -62,8 +74,8 @@ async function evaluateTestSuite(testSuite) {
     setUpSuite.call(testSuite);
     for (testCase in testSuite) {
         if (testSuite.hasOwnProperty(testCase) &&
-                typeof testSuite[testCase] === 'function') {
-            i += 1;
+                typeof testSuite[testCase] === "function") {
+            testsRun += 1;
 
             setUp.call(testSuite);
 
@@ -72,7 +84,7 @@ async function evaluateTestSuite(testSuite) {
             try {
                 await testSuite[testCase]();
             } catch (e) {
-                j += 1;
+                testsFailed += 1;
 
                 stdout = '- ' + testCase;
                 if (e.message) {
