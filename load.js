@@ -40,17 +40,20 @@ function loadDirectory(dirPath) {
 
     if (stats.isDirectory() === true) {
         directoryContents = fs.readdirSync(dirPath);
-        i = directoryContents.length;
-        while (i--) {
-            if (fs.statSync(path.join(dirPath,
-                    directoryContents[i])).isDirectory()) {
-                loadDirectory(path.join(dirPath, directoryContents[i]));
+        if (args[0] === "--recursive") {
+            i = directoryContents.length;
+            while (i--) {
+                if (fs.statSync(path.join(dirPath,
+                        directoryContents[i])).isDirectory()) {
+                    loadDirectory(path.join(dirPath, directoryContents[i]));
+                }
             }
         }
 
         i = directoryContents.length;
         while (i--) {
-            if (fs.statSync(path.join(dirPath, directoryContents[i])).isFile() &&
+            if (fs.statSync(path.join(dirPath,
+                    directoryContents[i])).isFile() &&
                     path.extname(directoryContents[i]) === ".js") {
 
                 console.log("Loading " + directoryContents[i] + " ...");
@@ -72,12 +75,8 @@ function loadDirectory(dirPath) {
     }
 }
 
-(function () {
-    "use strict";
+var args = process.argv.slice(2);
 
-    var args = process.argv.slice(2);
-
-    if (args[0]) {
-        loadDirectory(path.resolve(args.pop()));
-    }
-}());
+if (args[0]) {
+    loadDirectory(path.resolve(args.pop()));
+}

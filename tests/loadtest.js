@@ -63,7 +63,7 @@ var nodeUnit = require("../nodeunit.js"),
             assert(returnedOutput.indexOf(expectedOutput_One) > -1, "Unexpected stdout from dependencies/successFiles/mockTestFileOne.js");
             assert(returnedOutput.indexOf(expectedOutput_Two) > -1, "Unexpected stdout from dependencies/successFiles/mockTestFileTwo.js");
         },
-        "test load.js executes files in a subdirectory": function () {
+        "test load.js does not recurrsively load sub directories when not given --recursive argument": function () {
             "use strict";
 
             var expectedOutput_Main = "Loading recursionTestFile.js ..." + os.EOL + 
@@ -73,7 +73,7 @@ var nodeUnit = require("../nodeunit.js"),
                 returnedOutput = child_process.spawnSync("node", [path.join(__dirname, "..", "load.js"), path.join(__dirname, "dependencies", "recursionFiles")], { encoding: "utf8" }).stdout;
 
             assert(returnedOutput.indexOf(expectedOutput_Main) > -1, "Unexpected stdout from dependencies/successFiles/recursionTestFile.js");
-            assert(returnedOutput.indexOf(expectedOutput_Sub) > -1, "Unexpected stdout from dependencies/successFiles/recursionSubTestFile.js");
+            assert(returnedOutput.indexOf(expectedOutput_Sub) === -1, "Unexpected stdout from dependencies/successFiles/recursionSubTestFile.js");
         },
         "test load.js accepts relative path to directory as input argument": function () {
             "use strict";
@@ -102,6 +102,18 @@ var nodeUnit = require("../nodeunit.js"),
                 returnedOutput = child_process.spawnSync("node", [path.join(__dirname, "..", "load.js"), path.join("dependencies", "successFiles")], { encoding: "utf8" }).stdout;
             
             assert(returnedOutput.indexOf(expectedOutput) > -1, "Line break not found in stdout");
+        },
+        "test load.js recurrsively loads sub directories when given --recursive argument": function () {
+            "use strict";
+
+            var expectedOutput_Main = "Loading recursionTestFile.js ..." + os.EOL + 
+                    "1 test(s) run; 0 test(s) failed." + os.EOL,
+                expectedOutput_Sub = "Loading recursionSubTestFile.js ..." + os.EOL +
+                    "1 test(s) run; 0 test(s) failed." + os.EOL,
+                returnedOutput = child_process.spawnSync("node", [path.join(__dirname, "..", "load.js"), "--recursive", path.join(__dirname, "dependencies", "recursionFiles")], { encoding: "utf8" }).stdout;
+
+            assert(returnedOutput.indexOf(expectedOutput_Main) > -1, "Unexpected stdout from dependencies/successFiles/recursionTestFile.js");
+            assert(returnedOutput.indexOf(expectedOutput_Sub) > -1, "Unexpected stdout from dependencies/successFiles/recursionSubTestFile.js");
         }
     };
 
