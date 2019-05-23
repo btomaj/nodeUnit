@@ -29,7 +29,6 @@ function loadDirectory(dirPath) {
 
     var stats = {},
         directoryContents = [],
-        output = "",
         result = {},
         i;
 
@@ -54,6 +53,8 @@ function loadDirectory(dirPath) {
             if (fs.statSync(path.join(dirPath, directoryContents[i])).isFile() &&
                     path.extname(directoryContents[i]) === ".js") {
 
+                console.log("Loading " + directoryContents[i] + " ...");
+
                 result = child_process.spawnSync("node", [path.join(dirPath,
                     directoryContents[i])], { encoding: "utf-8" });
                 if (result.stderr) {
@@ -62,13 +63,13 @@ function loadDirectory(dirPath) {
                 } else {
                     process.stdout.write(result.stdout);
                 }
+
+                console.log();
             }
         }
     } else {
         throw new Error(dirPath + " is not a directory" + os.EOL);
     }
-
-    return output;
 }
 
 (function () {
