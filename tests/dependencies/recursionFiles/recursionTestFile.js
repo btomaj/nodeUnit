@@ -1,5 +1,5 @@
-var nodeUnit = require('../../../nodeunit.js'),
-    assert = require('assert'),
+var nodeUnit = require("../../../nodeunit.js"),
+    assert = require("assert"),
 
     testSuite = {
         testCase: function () {}
