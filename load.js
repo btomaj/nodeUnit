@@ -12,9 +12,7 @@ var child_process = require("child_process"),
  * files.
  *
  * TODO
- * Add flag to prevent loading sub directories
  * Provide reporting on all found files, which were ignored, which were run.
- * Add option for better error reporting on exceptions in loaded files
  * Add test to ensure loaded file is a test file (calls nodeUnit.run()
  *
  * @method loadDirectory
