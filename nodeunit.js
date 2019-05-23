@@ -1,13 +1,33 @@
 /*jslint node */
 
 /**
+ * nodeUnit is an xUnit framework for node.js inspired by Kent Beck's "Test
+ * Driven Development by example."
+ *
+ * nodeUnit has two methods:
+ * nodeUnit.load() loads the file to be tested into the context of the test file
+ * so that its code can be exercised. See documentation for loadFile.
+ * nodeUnit.test() tests a test suite. See documentation for evaluateTestSuite.
+ *
+ * To construct a test file:
+ * 1. require("nodeUnit") and require("assert")
+ * 2. create a test suite of test cases (see  documentation of
+ *  evaluateTestSuite)
+ * 3. include the file to be tested into the test file context using
+ *  nodeUnit.load()
+ * 4. run the test suite by passing it to nodeUnit.test()
+ * For examples, see the test files in the "tests" directory.
+ *
+ * To test a file, run the test file by calling "node path/to/testfile.js" in
+ * the console/shell. nodeUnit will run and report failed tests in the format
+ * "- testCaseName[: Error.message]" followed by a summary of test results in
+ * the format "X test(s) run; Y test(s) failed."
+ *
  * When the test file is called with the --verbose argument, e.g.
  * "node path/to/testfile.js --verbose", nodeUnit reports the test result of
  * each test case in the test suite. The output takes the format of
  * "+ testCaseName" for tests that pass and "- testCaseName" for tests that
- * fail.
- *
- * In all cases, nodeUnit provides a summary of the test results in the format:
+ * fail, followed by a summary of the test results in the format
  * "X test(s) run; Y test(s) failed."
  *
  * @module nodeUnit
@@ -40,7 +60,7 @@ var fs = require("fs"),
  * All other methods are treated as test cases. Properties are permitted but
  * ignored.
  *
- * All methods of the test suite can refer to the test case object using 'this'.
+ * All methods of the test suite can refer to the test case object using "this".
  *
  * TODO
  * Run test suites in sequence
@@ -112,7 +132,7 @@ async function evaluateTestSuite(testSuite) {
  *
  * @method loadFile
  *
- * @param {string} filePath Relative path from the test file to the file to load
+ * @param filePath {string} Relative path from the test file to the file to load
  *
  * @static
  * @private

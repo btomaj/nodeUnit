@@ -6,10 +6,14 @@ var child_process = require("child_process"),
     process = require("process");
 
 /**
- * Recursively loads sub directories and executes tests in directories.
- * All files with a .js extention will be executed.
- * Test directory should only contain test files and supporting non-JavaScript
- * files.
+ * load.js is a utility script to help run all test files in the test file
+ * directory. Usage: "node load.js [--recursive] path/to/test/directory".
+ *
+ * When load.js is called with the --recursive argument, load.js recursively
+ * loads sub directories and executes all tests in those directories.
+ *
+ * The test directory should only contain test files and supporting
+ * non-JavaScript files. All files with a .js extention will be executed.
  *
  * TODO
  * Provide reporting on all found files, which were ignored, which were run.
