@@ -63,8 +63,10 @@ function loadDirectory(dirPath) {
                 if (result.stderr) {
                     process.stdout.write(directoryContents[i] +
                         " failed to execute" + os.EOL);
-                } else {
+                } else if (result.stdout) {
                     process.stdout.write(result.stdout);
+                } else {
+                    console.log("0 tests run.");
                 }
 
                 console.log();

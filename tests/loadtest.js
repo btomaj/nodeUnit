@@ -114,6 +114,14 @@ var nodeUnit = require("../nodeunit.js"),
 
             assert(returnedOutput.indexOf(expectedOutput_Main) > -1, "Unexpected stdout from dependencies/successFiles/recursionTestFile.js");
             assert(returnedOutput.indexOf(expectedOutput_Sub) > -1, "Unexpected stdout from dependencies/successFiles/recursionSubTestFile.js");
+        },
+        "test load.js declares if no tests were run": function () {
+            "use strict";
+
+            var expectedOutput = "0 tests run." + os.EOL,
+                returnedOutput = child_process.spawnSync("node", [path.join(__dirname, "..", "load.js"), path.join(__dirname, "dependencies")], { encoding: "utf8" }).stdout;
+
+            assert(returnedOutput.indexOf(expectedOutput) > -1, "Unexpected stdout from dependencies/loadTestData.js");
         }
     };
 
