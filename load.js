@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*jslint plusplus */
 var child_process = require("child_process"),
     path = require("path"),
