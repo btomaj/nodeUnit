@@ -1,27 +1,25 @@
 {
   "name": "nodeunit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "An xUnit framework for node.js inspired by JUnit and Kent Beck's \"Test-Driven Development by example\"",
-  "main": "nodeunit.js",
-  "directories": {
-    "test": "tests"
-  },
-  "scripts": {
-    "test": "nodeUnit.test();"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/btomaj/nodeUnit.git"
-  },
   "keywords": [
     "xUnit",
     "nodeUnit",
     "TDD"
   ],
-  "author": "Tomaj Bayat and David Warren",
-  "license": "ISC",
+  "homepage": "https://github.com/btomaj/nodeUnit#readme",
   "bugs": {
     "url": "https://github.com/btomaj/nodeUnit/issues"
   },
-  "homepage": "https://github.com/btomaj/nodeUnit#readme"
+  "license": "ISC",
+  "author": "Tomaj Bayat",
+  "contributors": ["David Warren"],
+  "main": "nodeunit.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/btomaj/nodeUnit.git"
+  }
 }
