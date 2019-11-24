@@ -65,15 +65,13 @@ function loadDirectory(dirPath) {
                 result = child_process.spawnSync("node", [path.join(dirPath,
                     directoryContents[i])], { encoding: "utf-8" });
                 if (result.stderr) {
-                    process.stdout.write(directoryContents[i] +
+                    console.log(directoryContents[i] +
                         " failed to execute" + os.EOL);
                 } else if (result.stdout) {
-                    process.stdout.write(result.stdout);
+                    console.log(result.stdout);
                 } else {
                     console.log("0 tests run.");
                 }
-
-                console.log();
             }
         }
     } else {
