@@ -37,7 +37,6 @@
  */
 var fs = require("fs"),
     vm = require("vm"),
-    os = require("os"),
     path = require("path"),
     process = require("process"),
     mode = process.argv.slice(2)[0];
