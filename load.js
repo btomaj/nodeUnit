@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /*jslint plusplus */
+
 var child_process = require("child_process"),
     path = require("path"),
     os = require("os"),
@@ -22,7 +23,7 @@ var child_process = require("child_process"),
  *
  * @method loadDirectory
  *
- * @param path {String} Absolute path to test file or directory of test files.
+ * @param dirPath {String} Absolute path to test file or directory of test files.
  *
  * @static
  * @private
