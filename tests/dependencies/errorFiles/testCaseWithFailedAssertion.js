@@ -4,7 +4,7 @@ var nodeUnit = require("../../../nodeunit.js"),
     testSuite = {
         testCase: function () {
             "use strict";
-            assert(true === false);
+            assert(true === false, "false == true");
         }
     };
 
