@@ -167,7 +167,14 @@ var nodeUnit = require("../nodeunit.js"),
 
             assert(log === "onetwo", "Members not iterated or iterated in the wrong order.")
         },
-
+        "test replacing require in browser but not in Node.js": function () {
+            var browserRequire = function () {return {argv: {
+                    slice: function() {return [];}
+                }};},
+                nodeRequire = require || browserRequire;
+        
+            assert(require === nodeRequire, "Node.js replaced require")
+        }
     };
 
     crossContextModuleTestSuite = {
