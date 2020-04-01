@@ -167,9 +167,19 @@ var nodeUnit = require("../nodeunit.js"),
 
             assert(log === "onetwo", "Members not iterated or iterated in the wrong order.")
         },
+
+    };
+
+    crossContextModuleTestSuite = {
+        "test browser and Node.js module loads in node": function () {
+            var moduleExport = require(path.join(__dirname, "dependencies", "testModule.js"));
+
+            assert(moduleExport === true, "module did not load in Node.js")
+        }
     };
 
 nodeUnit.test(vmTestSuite);
 nodeUnit.test(fsTestSuite);
 nodeUnit.test(asyncTestSuite);
 nodeUnit.test(miscTestSuite);
+nodeUnit.test(crossContextModuleTestSuite);
