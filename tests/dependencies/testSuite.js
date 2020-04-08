@@ -1,5 +1,4 @@
 var nodeUnit = require("../../nodeUnit.js"),
-    assert = require("assert"),
 
     testSuite = {
         setUpSuite: function () {

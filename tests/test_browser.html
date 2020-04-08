@@ -3,9 +3,44 @@
     <head>
         <meta charset="utf-8">
 
-        <title>My page title</title>
+        <title>Testing nodeUnit.js in the browser</title>
 
         <script src="../nodeunit.js"></script>
+        <script>
+            testSuite = {
+                setUpSuite: function () {
+                    //log += 'setUpSuite ';
+                    console.log("setUpSuite");
+                },
+                setUp: function () {
+                    //log += 'setUp ';
+                    console.log("setUp");
+                },
+                testCaseSync: function () {
+                    //log += 'testCaseSync ';
+                    console.log("testCaseSync");
+                },
+                testCaseAsync: async function () {
+                    await new Promise(function (resolve) {
+                        setTimeout(function () {
+                            //log += 'testCaseAsync ';
+                            console.log("testCaseAsync");
+                            resolve();
+                        }, 100);
+                    });
+                },
+                tearDown: function () {
+                    //log += 'tearDown ';
+                    console.log("tearDown");
+                },
+                tearDownSuite: function () {
+                    //log += 'tearDownSuite';
+                    console.log("tearDownSuite");
+                }
+            };
+
+            nodeUnit.test(testSuite);
+        </script>
     </head>
 
     <body>
