@@ -5,7 +5,7 @@ var nodeUnit = require("../nodeUnit.js"),
     path = require("path"),
     os = require("os"),
 
-    testSuite = {
+    evaluateTestSuite = {
         "test nodeUnit tests a test suite": function () {
             "use strict";
 
@@ -49,6 +49,18 @@ var nodeUnit = require("../nodeUnit.js"),
 
             assert(expectedOutput === returnedOutput, "Unexpected stdout from dependencies/testSuite.js");
         }
+    },
+
+    loadFile = {
+        "test nodeUnit.load() loads file content into current scope": function () {
+            "use strict";
+
+            nodeUnit.load('dependencies' + path.sep + "loadTestData.js", "utf8");
+            // expect that loadTestData.js should set global variable testData = true
+
+            assert(testData === true, "nodeUnit.load() does not load file content into current scope");
+        }
     };
 
-nodeUnit.test(testSuite);
+nodeUnit.test(evaluateTestSuite);
+nodeUnit.test(loadFile);
